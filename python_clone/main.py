@@ -21,7 +21,7 @@ while running:
     dt = (pygame.time.get_ticks()-last_time)/1000
     last_time = pygame.time.get_ticks()
 
-    gfx.map.blit(gfx.map_img, (0,0))
+    gfx.map.blit(gfx.map_image, (0,0))
 
     robot.kinematics(dt)
     gfx.draw_robot(robot.x, robot.y, robot.heading)
