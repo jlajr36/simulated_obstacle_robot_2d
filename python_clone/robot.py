@@ -17,7 +17,7 @@ class Robot:
 
         self.heading = 0
 
-        self.vl = 0.01*self.m2p #meters/s
+        self.vl = 0.01*self.m2p # meters/s
         self.vr = 0.01*self.m2p
 
         self.maxspeed = 0.02*self.m2p
@@ -29,12 +29,13 @@ class Robot:
     def avoid_obstacles(self, point_cloud, dt):
         closest_obs = None
         dist = np.inf
+
         if len(point_cloud) > 1:
             for point in point_cloud:
                 if dist > distance([self.x, self.y], point):
                     dist = distance([self.x, self.y], point)
                     closest_obs = (point, dist)
-
+            
             if closest_obs[1] < self.min_obs_dist and self.count_down > 0:
                 self.count_down -= dt
                 self.move_backward()
@@ -43,7 +44,7 @@ class Robot:
                 self.count_down = 5
                 # move foward
                 self.move_forward()
-
+    
     def move_backward(self):
         self.vr = - self.minspeed
         self.vl = - self.minspeed/2 # half speed to move back with curve
@@ -54,12 +55,10 @@ class Robot:
 
     def kinematics(self, dt):
         self.x += ((self.vl+self.vr)/2) * math.cos(self.heading) * dt
-        self.y -+ ((self.vl+self.vr)/2) * math.sin(self.heading) * dt
+        self.y -= ((self.vl+self.vr)/2) * math.sin(self.heading) * dt
         self.heading += (self.vr - self.vl) / self.w * dt
-
         if self.heading > 2*math.pi or self.heading < -2*math.pi:
             self.heading = 0
-
         self.vr = max(min(self.maxspeed, self.vr), self.minspeed)
         self.vl = max(min(self.maxspeed, self.vl), self.minspeed)
 
@@ -67,21 +66,25 @@ class Graphics:
     def __init__(self, dimentions, robot_img_path, map_img_path) -> None:
         pygame.init()
         
+        # COLORS
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.green = (0, 255, 0)
         self.blue = (0, 0, 255)
         self.red = (255, 0, 0)
         self.yellow = (255, 255, 0)
-        
-        self.robot = pygame.image.load(robot_img_path)
-        self.map_img = pygame.image.load(map_img_path)
 
+        #---- map & robot img ----
+        self.robot = pygame.image.load(robot_img_path)
+        self.map_image = pygame.image.load(map_img_path)
+
+        # dimentions
         self.height, self.width = dimentions
 
-        pygame.display.set_caption("Obstacle Avoidance")
+        # window
+        pygame.display.set_caption("Obstacle Avoidance Robot")
         self.map = pygame.display.set_mode((self.width, self.height))
-        self.map.blit(self.map_img, (0,0))
+        self.map.blit(self.map_image, (0, 0))
 
     def draw_robot(self, x, y, heading):
         rotated = pygame.transform.rotozoom(self.robot, math.degrees(heading), 1)
@@ -114,6 +117,6 @@ class Ultrasonic:
                     color = self.map.get_at((x, y))
                     self.map.set_at((x, y), (0, 208, 255))
                     if (color[0], color[1], color[2]) == (0, 0, 0):
-                        obstacles.append([x, y])
-                        break
+                       obstacles.append([x, y])
+                       break
         return obstacles
