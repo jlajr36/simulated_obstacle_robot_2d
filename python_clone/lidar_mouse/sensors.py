@@ -6,7 +6,8 @@ def uncertainty_add( distance, angle, sigma):
     mean = np.array([distance, angle])
     covariance = np.diag(sigma ** 2)
     distance, angle = np.random.multivariate_normal(mean, covariance)
-    distance = max(angle, 0)
+    distance = max(distance, 0)
+    angle = max(angle, 0)
     return [distance, angle] 
 
 class LaserSensor:
