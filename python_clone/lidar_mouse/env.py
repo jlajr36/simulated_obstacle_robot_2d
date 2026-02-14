@@ -24,7 +24,7 @@ class buildEnvironment:
 
     def AD2pos(self, distance, angle, robotPosition):
         x = distance * math.cos(angle) + robotPosition[0]
-        y = distance * math.sin(angle) + robotPosition[1]
+        y = -distance * math.sin(angle) + robotPosition[1]
         return (int(x), int(y))
     
     def dataStorage(self, data):
